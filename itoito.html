@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>itoito - Media Player</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #fafafa;
+            padding: 50px;
+        }
+        .media-container {
+            background: #fff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            display: inline-block;
+        }
+        .photo {
+            max-width: 300px;
+            border-radius: 8px;
+            display: block;
+            margin: 0 auto 20px auto;
+        }
+        audio {
+            width: 100px; /* Минималистичный плеер, можно убрать строку для стандартной ширины */
+            max-width: 100%;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="media-container">
+        <!-- Отображение фотографии на странице -->
+        <img class="photo" src="https://vvlasov891.github.io/babushkin/icon.jpg" alt="Фото">
+        
+        <!-- Встроенный плеер для прослушивания трека -->
+        <audio controls>
+            <source src="https://vvlasov891.github.io/babushkin/BAILEY_-_Sector_Sweep_-_Half-life_2_Orange_Box_Episode_12_Portal_Team_fortress_2_2007_OST_64228539.mp3" type="audio/mpeg">
+            Ваш браузер не поддерживает аудиоэлемент.
+        </audio>
+    </div>
+
+</body>
+</html>
