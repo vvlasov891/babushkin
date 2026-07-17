@@ -12,25 +12,34 @@
 
     <style>
         body {
-            font-family: 'Montserrat', Arial, sans-serif; /* Применяем новый шрифт */
+            font-family: 'Montserrat', Arial, sans-serif;
             background-color: #f4f4f9;
             margin: 0;
             padding: 40px;
             color: #333;
             display: flex;
             flex-direction: column;
-            align-items: center; /* Центрируем контент */
+            align-items: center;
             text-align: center;
         }
 
-        /* Стиль для нового блока приветствия */
+        /* Стиль для блока приветствия */
         .welcome-container {
             margin-bottom: 40px;
             max-width: 600px;
         }
-        .welcome-title {
-            font-size: 2.5rem;
+        .gman-quote {
+            font-size: 1.8rem;
             font-weight: 800;
+            color: #cf5300; /* Атмосферный оранжевый цвет в стиле Half-Life */
+            line-height: 1.3;
+            margin-bottom: 20px;
+            text-transform: uppercase; /* Все буквы заглавные для пафоса */
+            letter-spacing: 1px;
+        }
+        .welcome-title {
+            font-size: 2.2rem;
+            font-weight: 700;
             color: #222;
             margin-bottom: 10px;
         }
@@ -69,7 +78,7 @@
         }
         .itoito-btn:hover {
             background-color: #e68a00;
-            transform: translateY(-2px); /* Эффект приподнимания кнопки */
+            transform: translateY(-2px);
             box-shadow: 0 6px 12px rgba(255, 152, 0, 0.3);
             text-decoration: none;
         }
@@ -77,8 +86,9 @@
 </head>
 <body>
 
-    <!-- Новый блок приветствия (Пункт 2) -->
+    <!-- Блок приветствия с вашей цитатой -->
     <div class="welcome-container">
+        <div class="gman-quote">Проснитесь и пойте, посетитель сайта. <br>Проснитесь и пойте.</div>
         <div class="welcome-title">Добро пожаловать!</div>
         <p class="welcome-text">
             Рад видеть вас на моём личном портале. Здесь вы можете послушать легендарный саундтрек 
