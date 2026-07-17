@@ -9,24 +9,32 @@
         body {
             font-family: Arial, sans-serif;
             text-align: center;
-            background-color: #fafafa;
-            padding: 50px;
+            background-color: #4A4D4A; /* Тот самый темно-серый цвет фона */
+            margin: 0;
+            padding: 50px 20px;
         }
         .media-container {
-            background: #fff;
+            /* Темная полупрозрачная карточка в стиле Steam */
+            background: rgba(30, 32, 30, 0.7);
             padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.05);
             display: inline-block;
+            backdrop-filter: blur(4px); /* Легкое размытие заднего плана */
         }
         .photo {
             max-width: 300px;
-            border-radius: 8px;
+            border-radius: 10px;
             display: block;
-            margin: 0 auto 20px auto;
+            margin: 0 auto 25px auto;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
         }
         audio {
+            width: 300px;
             max-width: 100%;
+            display: block;
+            margin: 0 auto;
         }
     </style>
 </head>
