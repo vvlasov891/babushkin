@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title>itoito - Media Player</title>
-    <!-- Подключение иконки сайта (favicon) -->
-    <link rel="icon" type="image/x-icon" href="https://babusha.duckdns.org/favicon.ico">
+    <!-- Относительный путь к иконке вкладки -->
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -33,12 +33,12 @@
 <body>
 
     <div class="media-container">
-        <!-- Картинка с нового домена -->
-        <img class="photo" src="https://babusha.duckdns.org/icon.jpg" alt="Фото">
+        <!-- Картинка загружается напрямую из репозитория -->
+        <img class="photo" src="icon.jpg" alt="Фото">
         
-        <!-- Аудиоплеер с новым адресом трека -->
+        <!-- Аудио загружается напрямую из репозитория -->
         <audio controls>
-            <source src="https://babusha.duckdns.org/BAILEY_-_Sector_Sweep_-_Half-life_2_Orange_Box_Episode_12_Portal_Team_fortress_2_2007_OST_64228539.mp3" type="audio/mpeg">
+            <source src="BAILEY_-_Sector_Sweep_-_Half-life_2_Orange_Box_Episode_12_Portal_Team_fortress_2_2007_OST_64228539.mp3" type="audio/mpeg">
             Ваш браузер не поддерживает аудиоэлемент.
         </audio>
     </div>
