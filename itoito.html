@@ -71,7 +71,6 @@
             height: 100%;
             border-radius: 3px;
         }
-        /* Текст времени */
         .time-display {
             color: #aaa;
             font-size: 0.75rem;
@@ -84,8 +83,7 @@
 </head>
 <body>
 
-    <!-- Тег аудио без лишних блокирующих параметров -->
-    <audio id="audio-track">
+    <audio id="audio-track" preload="auto">
         <source src="BAILEY_-_Sector_Sweep_-_Half-life_2_Orange_Box_Episode_12_Portal_Team_fortress_2_2007_OST_64228539.mp3" type="audio/mpeg">
     </audio>
 
@@ -97,7 +95,6 @@
             <div class="progress-container" id="progress-timeline">
                 <div class="progress-bar" id="progress-fill"></div>
             </div>
-            <!-- Сюда будем выводить время трека -->
             <div class="time-display" id="time-show">0:00</div>
         </div>
     </div>
@@ -109,7 +106,8 @@
         const progressFill = document.getElementById('progress-fill');
         const timeShow = document.getElementById('time-show');
 
-        // Функция форматирования секунд в формат Минуты:Секунды
+        let isWaiting = false;
+
         function formatTime(seconds) {
             if (isNaN(seconds) || !isFinite(seconds)) return "0:00";
             const mins = Math.floor(seconds / 60);
@@ -117,20 +115,28 @@
             return mins + ":" + (secs < 10 ? "0" : "") + secs;
         }
 
-        // Переключение Play / Pause
         playBtn.addEventListener('click', () => {
             if (audio.paused) {
-                // Запускаем воспроизведение
-                audio.play();
+                audio.play().catch(err => console.log("Ждем загрузки файла..."));
                 playBtn.innerText = '❚❚';
             } else {
-                // Ставим на паузу
                 audio.pause();
                 playBtn.innerText = '▶';
             }
         });
 
-        // Обновление полосы прогресса и цифр времени
+        // Если интернет медленный и аудио встало на загрузку (буферизацию)
+        audio.addEventListener('waiting', () => {
+            isWaiting = true;
+            playBtn.innerText = '⏳'; // Показываем песочные часы вместо паузы
+        });
+
+        // Когда интернет пролагал и файл продолжил скачиваться/играть
+        audio.addEventListener('playing', () => {
+            isWaiting = false;
+            playBtn.innerText = '❚❚';
+        });
+
         audio.addEventListener('timeupdate', () => {
             if (audio.duration && isFinite(audio.duration)) {
                 const percentage = (audio.currentTime / audio.duration) * 100;
@@ -139,28 +145,23 @@
             }
         });
 
-        // Безопасная перемотка трека кликом
         progressContainer.addEventListener('click', (e) => {
             if (audio.duration && isFinite(audio.duration) && audio.duration > 0) {
                 const width = progressContainer.clientWidth;
                 const clickX = e.offsetX;
                 const targetTime = (clickX / width) * audio.duration;
-                
-                // Проверяем, что число получилось корректным, прежде чем отдавать его плееру
                 if (!isNaN(targetTime) && isFinite(targetTime)) {
                     audio.currentTime = targetTime;
                 }
             }
         });
 
-        // Сброс при окончании трека
         audio.addEventListener('ended', () => {
             playBtn.innerText = '▶';
             progressFill.style.width = '0%';
             timeShow.innerText = formatTime(0);
         });
         
-        // Как только браузер узнает длину трека, обновим таймер
         audio.addEventListener('loadedmetadata', () => {
             timeShow.innerText = formatTime(audio.duration);
         });
