@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>itoito - Media Player</title>
+    <!-- Относительный путь к иконке вкладки -->
     <link rel="icon" type="image/x-icon" href="favicon.ico">
     <style>
         body {
@@ -39,6 +40,7 @@
             align-items: center;
             gap: 15px;
             border: 1px solid #ff9800;
+            box-sizing: border-box;
         }
         .play-btn {
             background: #ff9800;
@@ -47,12 +49,14 @@
             height: 40px;
             border-radius: 50%;
             color: white;
-            font-size: 1.2rem;
+            font-size: 1rem;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
             transition: background 0.2s;
+            flex-shrink: 0;
+            padding: 0;
         }
         .play-btn:hover { background: #e68a00; }
         
@@ -69,14 +73,13 @@
             width: 0%;
             height: 100%;
             border-radius: 3px;
-            transition: width 0.1s linear;
         }
     </style>
 </head>
 <body>
 
-    <!-- Скрытый стандартный аудио-тег -->
-    <audio id="audio-track">
+    <!-- Тег аудио с принудительным предзагрузкой файла (preload="auto") -->
+    <audio id="audio-track" preload="auto">
         <source src="BAILEY_-_Sector_Sweep_-_Half-life_2_Orange_Box_Episode_12_Portal_Team_fortress_2_2007_OST_64228539.mp3" type="audio/mpeg">
     </audio>
 
@@ -99,29 +102,42 @@
         const progressContainer = document.getElementById('progress-timeline');
         const progressFill = document.getElementById('progress-fill');
 
-        // Переключение Play / Pause
+        // Переключение Play / Pause с проверкой загрузки
         playBtn.addEventListener('click', () => {
             if (audio.paused) {
-                audio.play();
-                playBtn.innerText = '❚❚'; // Меняем иконку на Паузу
+                audio.play().then(() => {
+                    playBtn.innerText = '❚❚'; // Успешно запустилось — ставим паузу
+                }).catch(error => {
+                    console.log("Файл еще загружается сервером:", error);
+                });
             } else {
                 audio.pause();
-                playBtn.innerText = '▶'; // Меняем иконку на Play
+                playBtn.innerText = '▶'; // Поставили на паузу — возвращаем иконку играть
             }
         });
 
-        // Обновление полосы прогресса при воспроизведении
+        // Обновление полосы прогресса (только если файл отдает свою длительность)
         audio.addEventListener('timeupdate', () => {
-            const percentage = (audio.currentTime / audio.duration) * 100;
-            progressFill.style.width = percentage + '%';
+            if (audio.duration) {
+                const percentage = (audio.currentTime / audio.duration) * 100;
+                progressFill.style.width = percentage + '%';
+            }
         });
 
-        // Перемотка трека кликом по полосе прогресса
+        // Перемотка трека кликом по полосе прогресса с защитой от пустой длины
         progressContainer.addEventListener('click', (e) => {
-            const width = progressContainer.clientWidth;
-            const clickX = e.offsetX;
-            const duration = audio.duration;
-            audio.currentTime = (clickX / width) * duration;
+            if (audio.duration) {
+                const width = progressContainer.clientWidth;
+                const clickX = e.offsetX;
+                const duration = audio.duration;
+                audio.currentTime = (clickX / width) * duration;
+            }
+        });
+
+        // Если трек доиграл до самого конца, возвращаем кнопку в режим готовности к старту
+        audio.addEventListener('ended', () => {
+            playBtn.innerText = '▶';
+            progressFill.style.width = '0%';
         });
     </script>
 </body>
