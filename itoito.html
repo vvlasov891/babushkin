@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>itoito - Media Player</title>
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #4A4D4A;
+            margin: 0;
+            padding: 50px 20px;
+        }
+        .media-container {
+            background: rgba(30, 32, 30, 0.85);
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            display: inline-block;
+        }
+        .photo {
+            max-width: 300px;
+            border-radius: 10px;
+            display: block;
+            margin: 0 auto 25px auto;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+        }
+        .custom-player {
+            width: 300px;
+            margin: 0 auto;
+            background: #252825;
+            padding: 15px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border: 1px solid #ff9800;
+            box-sizing: border-box;
+        }
+        .play-btn {
+            background: #ff9800;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            color: white;
+            font-size: 1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+            flex-shrink: 0;
+            padding: 0;
+        }
+        .play-btn:hover { background: #e68a00; }
+        
+        .progress-container {
+            flex-grow: 1;
+            background: #444;
+            height: 6px;
+            border-radius: 3px;
+            cursor: pointer;
+            position: relative;
+        }
+        .progress-bar {
+            background: #ff9800;
+            width: 0%;
+            height: 100%;
+            border-radius: 3px;
+        }
+        /* Текст времени */
+        .time-display {
+            color: #aaa;
+            font-size: 0.75rem;
+            font-family: monospace;
+            flex-shrink: 0;
+            min-width: 35px;
+            text-align: right;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Тег аудио без лишних блокирующих параметров -->
+    <audio id="audio-track">
+        <source src="BAILEY_-_Sector_Sweep_-_Half-life_2_Orange_Box_Episode_12_Portal_Team_fortress_2_2007_OST_64228539.mp3" type="audio/mpeg">
+    </audio>
+
+    <div class="media-container">
+        <img class="photo" src="icon.jpg" alt="Фото">
+        
+        <div class="custom-player">
+            <button class="play-btn" id="play-pause-btn">▶</button>
+            <div class="progress-container" id="progress-timeline">
+                <div class="progress-bar" id="progress-fill"></div>
+            </div>
+            <!-- Сюда будем выводить время трека -->
+            <div class="time-display" id="time-show">0:00</div>
+        </div>
+    </div>
+
+    <script>
+        const audio = document.getElementById('audio-track');
+        const playBtn = document.getElementById('play-pause-btn');
+        const progressContainer = document.getElementById('progress-timeline');
+        const progressFill = document.getElementById('progress-fill');
+        const timeShow = document.getElementById('time-show');
+
+        // Функция форматирования секунд в формат Минуты:Секунды
+        function formatTime(seconds) {
+            if (isNaN(seconds) || !isFinite(seconds)) return "0:00";
+            const mins = Math.floor(seconds / 60);
+            const secs = Math.floor(seconds % 60);
+            return mins + ":" + (secs < 10 ? "0" : "") + secs;
+        }
+
+        // Переключение Play / Pause
+        playBtn.addEventListener('click', () => {
+            if (audio.paused) {
+                // Запускаем воспроизведение
+                audio.play();
+                playBtn.innerText = '❚❚';
+            } else {
+                // Ставим на паузу
+                audio.pause();
+                playBtn.innerText = '▶';
+            }
+        });
+
+        // Обновление полосы прогресса и цифр времени
+        audio.addEventListener('timeupdate', () => {
+            if (audio.duration && isFinite(audio.duration)) {
+                const percentage = (audio.currentTime / audio.duration) * 100;
+                progressFill.style.width = percentage + '%';
+                timeShow.innerText = formatTime(audio.currentTime);
+            }
+        });
+
+        // Безопасная перемотка трека кликом
+        progressContainer.addEventListener('click', (e) => {
+            if (audio.duration && isFinite(audio.duration) && audio.duration > 0) {
+                const width = progressContainer.clientWidth;
+                const clickX = e.offsetX;
+                const targetTime = (clickX / width) * audio.duration;
+                
+                // Проверяем, что число получилось корректным, прежде чем отдавать его плееру
+                if (!isNaN(targetTime) && isFinite(targetTime)) {
+                    audio.currentTime = targetTime;
+                }
+            }
+        });
+
+        // Сброс при окончании трека
+        audio.addEventListener('ended', () => {
+            playBtn.innerText = '▶';
+            progressFill.style.width = '0%';
+            timeShow.innerText = formatTime(0);
+        });
+        
+        // Как только браузер узнает длину трека, обновим таймер
+        audio.addEventListener('loadedmetadata', () => {
+            timeShow.innerText = formatTime(audio.duration);
+        });
+    </script>
+</body>
+</html>
