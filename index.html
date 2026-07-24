@@ -5,7 +5,6 @@
     <title>there was BAILEY_-_Sector_Sweep_-_Half-life_2_Orange_Box_Episode_12_Portal_Team_fortress_2_2007_OST_64228539.mp3</title>
     <link rel="icon" type="image/x-icon" href="favicon.ico">
     
-    <!-- Подключаем современный шрифт Montserrat из Google Fonts -->
     <link rel="preconnect" href="https://googleapis.com">
     <link rel="preconnect" href="https://gstatic.com" crossorigin>
     <link href="https://googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
@@ -13,49 +12,35 @@
     <style>
         body {
             font-family: 'Montserrat', Arial, sans-serif;
-            background-color: #4A4D4A; /* Новый темно-серый цвет фона с вашего фото */
+            background-color: #4A4D4A;
             margin: 0;
             padding: 40px;
-            color: #ffffff; /* Белый цвет основного текста для контраста */
+            color: #ffffff;
             display: flex;
             flex-direction: column;
             align-items: center;
             text-align: center;
         }
-
-        /* Блок приветствия */
         .welcome-container {
             margin-bottom: 40px;
             max-width: 600px;
         }
-
-        /* Эффект мерцания для фразы G-Man'а */
+        /* Эффект мерцания */
         .gman-quote {
             font-size: 1.8rem;
             font-weight: 800;
-            color: #ff7700; /* Яркий Half-Life оранжевый */
+            color: #ff7700;
             line-height: 1.3;
             margin-bottom: 20px;
             text-transform: uppercase;
             letter-spacing: 1px;
-            text-shadow: 0 0 10px rgba(255, 119, 0, 0.4);
-            
-            /* Подключаем анимацию мерцания */
+            text-shadow: 0 0 10px rgba(255, 119, 0, 0.6);
             animation: gmanFlicker 3s infinite alternate;
         }
-
-        /* Описание анимации мерцания */
         @keyframes gmanFlicker {
-            0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
-                opacity: 1;
-                text-shadow: 0 0 10px rgba(255, 119, 0, 0.6), 0 0 20px rgba(255, 119, 0, 0.4);
-            }
-            20%, 24%, 55% {
-                opacity: 0.4;
-                text-shadow: none;
-            }
+            0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% { opacity: 1; text-shadow: 0 0 10px rgba(255, 119, 0, 0.6); }
+            20%, 24%, 55% { opacity: 0.4; text-shadow: none; }
         }
-
         .welcome-title {
             font-size: 2.2rem;
             font-weight: 700;
@@ -64,79 +49,81 @@
         }
         .welcome-text {
             font-size: 1.1rem;
-            color: #cccccc; /* Светло-серый цвет для описания */
+            color: #cccccc;
             line-height: 1.6;
         }
-        .welcome-text strong {
-            color: #ff9800;
-        }
+        .welcome-text strong { color: #ff9800; }
 
-        /* Стили для ссылок и кнопок */
-        h1 {
-            margin: 15px 0;
-            font-size: 1.5rem;
-            font-weight: 500;
-        }
-        a {
-            color: #ff9800; /* Ссылки стали оранжевыми, чтобы выделяться на темном */
-            text-decoration: none;
-            transition: all 0.2s ease;
-        }
-        a:hover {
-            color: #ffb74d;
-            text-decoration: underline;
-        }
+        h1 { margin: 15px 0; font-size: 1.5rem; font-weight: 500; }
+        a { color: #ff9800; text-decoration: none; transition: all 0.2s ease; }
+        a:hover { color: #ffb74d; text-decoration: underline; }
+        
+        .btn-container { display: flex; flex-direction: column; gap: 10px; margin-top: 20px; }
         .itoito-btn {
             display: inline-block;
-            margin-top: 25px;
             padding: 12px 30px;
             background-color: #ff9800;
             color: #fff;
             border-radius: 8px;
             font-weight: 700;
             text-decoration: none;
-            box-shadow: 0 4px 6px rgba(255, 152, 0, 0.2);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
             transition: all 0.2s ease;
         }
         .itoito-btn:hover {
             background-color: #e68a00;
             transform: translateY(-2px);
             box-shadow: 0 6px 12px rgba(255, 152, 0, 0.4);
-            text-decoration: none;
             color: #fff;
         }
+        .btn-soft { background-color: #5c6bc0; }
+        .btn-soft:hover { background-color: #3f51b5; box-shadow: 0 6px 12px rgba(92, 107, 192, 0.4); }
     </style>
 </head>
 <body>
 
-    <!-- Блок приветствия с мерцающей цитатой -->
     <div class="welcome-container">
-        <div class="gman-quote">Проснитесь и пойте, посетитель сайта. <br>Проснитесь и пойте.</div>
-        <div class="welcome-title">Добро пожаловать!</div>
+        <!-- Сюда JavaScript вставит случайную цитату -->
+        <div class="gman-quote" id="gman-quote-box">Загрузка цитаты...</div>
+        
+        <!-- Сюда JavaScript вставит динамический заголовок -->
+        <div class="welcome-title" id="welcome-time-title">Добро пожаловать!</div>
+        
         <p class="welcome-text">
             Рад видеть вас на моём личном портале. Здесь вы можете послушать легендарный саундтрек 
             <strong>Sector Sweep</strong> из Half-Life 2: Episode Two и посмотреть культовое фото.
         </p>
     </div>
 
-    <!-- Ссылки с относительными путями -->
-    <h1>
-        <a href="BAILEY_-_Sector_Sweep_-_Half-life_2_Orange_Box_Episode_12_Portal_Team_fortress_2_2007_OST_64228539.mp3" target="_blank">
-            Слушать трек Sector Sweep
-        </a>
-    </h1>
+    <h1><a href="BAILEY_-_Sector_Sweep_-_Half-life_2_Orange_Box_Episode_12_Portal_Team_fortress_2_2007_OST_64228539.mp3" target="_blank">Слушать трек Sector Sweep</a></h1>
+    <h1><a href="icon.jpg" target="_blank">Смотреть фото</a></h1>
 
-    <h1>
-        <a href="icon.jpg" target="_blank">
-            Смотреть фото
-        </a>
-    </h1>
+    <div class="btn-container">
+        <a class="itoito-btn" href="itoito.html" target="_blank">Открыть плеер itoito</a>
+        <a class="itoito-btn btn-soft" href="jetbrainsoft.html" target="_blank">Скачать JetBrains софт</a>
+    </div>
 
-    <p>
-        <a class="itoito-btn" href="itoito.html" target="_blank">
-            Открыть плеер itoito
-        </a>
-    </p>
-    
+    <!-- Наш JavaScript сценарий -->
+    <script>
+        // 1. Список цитат
+        const quotes = [
+            "Проснитесь и пойте, посетитель сайта. <br>Проснитесь и пойте.",
+            "Нужный человек не в том месте <br>может перевернуть мир.",
+            "Хм-м... Ожидайте непредвиденных <br>последствий...",
+            "Время... Неужели снова пришло <br>это время?"
+        ];
+        const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
+        document.getElementById("gman-quote-box").innerHTML = randomQuote;
+
+        // 2. Время суток
+        const hour = new Date().getHours();
+        let greeting = "Добро пожаловать!";
+        if (hour >= 5 && hour < 12) greeting = "Доброе утро, Гордон!";
+        else if (hour >= 12 && hour < 18) greeting = "Добрый день, Гордон!";
+        else if (hour >= 18 && hour < 23) greeting = "Добрый вечер, Гордон!";
+        else greeting = "Продуктивного ночного дежурства!";
+        
+        document.getElementById("welcome-time-title").innerText = greeting;
+    </script>
 </body>
 </html>
