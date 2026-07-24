@@ -3,25 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <title>itoito - Media Player</title>
-    <!-- Относительный путь к иконке вкладки -->
     <link rel="icon" type="image/x-icon" href="favicon.ico">
     <style>
         body {
             font-family: Arial, sans-serif;
             text-align: center;
-            background-color: #4A4D4A; /* Тот самый темно-серый цвет фона */
+            background-color: #4A4D4A;
             margin: 0;
             padding: 50px 20px;
         }
         .media-container {
-            /* Темная полупрозрачная карточка в стиле Steam */
-            background: rgba(30, 32, 30, 0.7);
+            background: rgba(30, 32, 30, 0.85);
             padding: 30px;
             border-radius: 16px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
             border: 1px solid rgba(255, 255, 255, 0.05);
             display: inline-block;
-            backdrop-filter: blur(4px); /* Легкое размытие заднего плана */
         }
         .photo {
             max-width: 300px;
@@ -30,26 +27,102 @@
             margin: 0 auto 25px auto;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
         }
-        audio {
+
+        /* Стили кастомного плеера */
+        .custom-player {
             width: 300px;
-            max-width: 100%;
-            display: block;
             margin: 0 auto;
+            background: #252825;
+            padding: 15px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            border: 1px solid #ff9800;
+        }
+        .play-btn {
+            background: #ff9800;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+        .play-btn:hover { background: #e68a00; }
+        
+        .progress-container {
+            flex-grow: 1;
+            background: #444;
+            height: 6px;
+            border-radius: 3px;
+            cursor: pointer;
+            position: relative;
+        }
+        .progress-bar {
+            background: #ff9800;
+            width: 0%;
+            height: 100%;
+            border-radius: 3px;
+            transition: width 0.1s linear;
         }
     </style>
 </head>
 <body>
 
+    <!-- Скрытый стандартный аудио-тег -->
+    <audio id="audio-track">
+        <source src="BAILEY_-_Sector_Sweep_-_Half-life_2_Orange_Box_Episode_12_Portal_Team_fortress_2_2007_OST_64228539.mp3" type="audio/mpeg">
+    </audio>
+
     <div class="media-container">
-        <!-- Картинка загружается напрямую из репозитория -->
         <img class="photo" src="icon.jpg" alt="Фото">
         
-        <!-- Аудио загружается напрямую из репозитория -->
-        <audio controls>
-            <source src="BAILEY_-_Sector_Sweep_-_Half-life_2_Orange_Box_Episode_12_Portal_Team_fortress_2_2007_OST_64228539.mp3" type="audio/mpeg">
-            Ваш браузер не поддерживает аудиоэлемент.
-        </audio>
+        <!-- Наш собственный красивый плеер -->
+        <div class="custom-player">
+            <button class="play-btn" id="play-pause-btn">▶</button>
+            <div class="progress-container" id="progress-timeline">
+                <div class="progress-bar" id="progress-fill"></div>
+            </div>
+        </div>
     </div>
 
+    <!-- Управление кастомным плеером -->
+    <script>
+        const audio = document.getElementById('audio-track');
+        const playBtn = document.getElementById('play-pause-btn');
+        const progressContainer = document.getElementById('progress-timeline');
+        const progressFill = document.getElementById('progress-fill');
+
+        // Переключение Play / Pause
+        playBtn.addEventListener('click', () => {
+            if (audio.paused) {
+                audio.play();
+                playBtn.innerText = '❚❚'; // Меняем иконку на Паузу
+            } else {
+                audio.pause();
+                playBtn.innerText = '▶'; // Меняем иконку на Play
+            }
+        });
+
+        // Обновление полосы прогресса при воспроизведении
+        audio.addEventListener('timeupdate', () => {
+            const percentage = (audio.currentTime / audio.duration) * 100;
+            progressFill.style.width = percentage + '%';
+        });
+
+        // Перемотка трека кликом по полосе прогресса
+        progressContainer.addEventListener('click', (e) => {
+            const width = progressContainer.clientWidth;
+            const clickX = e.offsetX;
+            const duration = audio.duration;
+            audio.currentTime = (clickX / width) * duration;
+        });
+    </script>
 </body>
 </html>
