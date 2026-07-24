@@ -2,8 +2,7 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>И то И то</title>
-    <!-- Относительный путь к иконке вкладки -->
+    <title>itoito - Media Player</title>
     <link rel="icon" type="image/x-icon" href="favicon.ico">
     <style>
         body {
@@ -28,8 +27,6 @@
             margin: 0 auto 25px auto;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
         }
-
-        /* Стили кастомного плеера */
         .custom-player {
             width: 300px;
             margin: 0 auto;
@@ -38,7 +35,7 @@
             border-radius: 10px;
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 12px;
             border: 1px solid #ff9800;
             box-sizing: border-box;
         }
@@ -74,70 +71,98 @@
             height: 100%;
             border-radius: 3px;
         }
+        /* Текст времени */
+        .time-display {
+            color: #aaa;
+            font-size: 0.75rem;
+            font-family: monospace;
+            flex-shrink: 0;
+            min-width: 35px;
+            text-align: right;
+        }
     </style>
 </head>
 <body>
 
-    <!-- Тег аудио с принудительным предзагрузкой файла (preload="auto") -->
-    <audio id="audio-track" preload="auto">
+    <!-- Тег аудио без лишних блокирующих параметров -->
+    <audio id="audio-track">
         <source src="BAILEY_-_Sector_Sweep_-_Half-life_2_Orange_Box_Episode_12_Portal_Team_fortress_2_2007_OST_64228539.mp3" type="audio/mpeg">
     </audio>
 
     <div class="media-container">
         <img class="photo" src="icon.jpg" alt="Фото">
         
-        <!-- Наш собственный красивый плеер -->
         <div class="custom-player">
             <button class="play-btn" id="play-pause-btn">▶</button>
             <div class="progress-container" id="progress-timeline">
                 <div class="progress-bar" id="progress-fill"></div>
             </div>
+            <!-- Сюда будем выводить время трека -->
+            <div class="time-display" id="time-show">0:00</div>
         </div>
     </div>
 
-    <!-- Управление кастомным плеером -->
     <script>
         const audio = document.getElementById('audio-track');
         const playBtn = document.getElementById('play-pause-btn');
         const progressContainer = document.getElementById('progress-timeline');
         const progressFill = document.getElementById('progress-fill');
+        const timeShow = document.getElementById('time-show');
 
-        // Переключение Play / Pause с проверкой загрузки
+        // Функция форматирования секунд в формат Минуты:Секунды
+        function formatTime(seconds) {
+            if (isNaN(seconds) || !isFinite(seconds)) return "0:00";
+            const mins = Math.floor(seconds / 60);
+            const secs = Math.floor(seconds % 60);
+            return mins + ":" + (secs < 10 ? "0" : "") + secs;
+        }
+
+        // Переключение Play / Pause
         playBtn.addEventListener('click', () => {
             if (audio.paused) {
-                audio.play().then(() => {
-                    playBtn.innerText = '❚❚'; // Успешно запустилось — ставим паузу
-                }).catch(error => {
-                    console.log("Файл еще загружается сервером:", error);
-                });
+                // Запускаем воспроизведение
+                audio.play();
+                playBtn.innerText = '❚❚';
             } else {
+                // Ставим на паузу
                 audio.pause();
-                playBtn.innerText = '▶'; // Поставили на паузу — возвращаем иконку играть
+                playBtn.innerText = '▶';
             }
         });
 
-        // Обновление полосы прогресса (только если файл отдает свою длительность)
+        // Обновление полосы прогресса и цифр времени
         audio.addEventListener('timeupdate', () => {
-            if (audio.duration) {
+            if (audio.duration && isFinite(audio.duration)) {
                 const percentage = (audio.currentTime / audio.duration) * 100;
                 progressFill.style.width = percentage + '%';
+                timeShow.innerText = formatTime(audio.currentTime);
             }
         });
 
-        // Перемотка трека кликом по полосе прогресса с защитой от пустой длины
+        // Безопасная перемотка трека кликом
         progressContainer.addEventListener('click', (e) => {
-            if (audio.duration) {
+            if (audio.duration && isFinite(audio.duration) && audio.duration > 0) {
                 const width = progressContainer.clientWidth;
                 const clickX = e.offsetX;
-                const duration = audio.duration;
-                audio.currentTime = (clickX / width) * duration;
+                const targetTime = (clickX / width) * audio.duration;
+                
+                // Проверяем, что число получилось корректным, прежде чем отдавать его плееру
+                if (!isNaN(targetTime) && isFinite(targetTime)) {
+                    audio.currentTime = targetTime;
+                }
             }
         });
 
-        // Если трек доиграл до самого конца, возвращаем кнопку в режим готовности к старту
+        // Сброс при окончании трека
         audio.addEventListener('ended', () => {
             playBtn.innerText = '▶';
             progressFill.style.width = '0%';
+            timeShow.innerText = formatTime(0);
+        });
+        
+        // Как только браузер узнает длину трека, обновим таймер
+        audio.addEventListener('loadedmetadata', () => {
+            timeShow.innerText = formatTime(audio.duration);
         });
     </script>
 </body>
