@@ -24,9 +24,24 @@
             max-width: 300px;
             border-radius: 10px;
             display: block;
-            margin: 0 auto 25px auto;
+            margin: 0 auto 20px auto;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
         }
+        
+        /* Название текущего трека */
+        .track-title {
+            color: #ff9800;
+            font-weight: bold;
+            font-size: 0.95rem;
+            margin-bottom: 15px;
+            width: 300px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            text-transform: uppercase;
+        }
+
+        /* Панель управления */
         .custom-player {
             width: 300px;
             margin: 0 auto;
@@ -35,27 +50,38 @@
             border-radius: 10px;
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
             border: 1px solid #ff9800;
             box-sizing: border-box;
         }
-        .play-btn {
+        
+        /* Кнопки управления */
+        .nav-btn, .play-btn {
             background: #ff9800;
             border: none;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
             color: white;
-            font-size: 1rem;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
             transition: background 0.2s;
+            border-radius: 50%;
             flex-shrink: 0;
             padding: 0;
         }
+        .play-btn {
+            width: 40px;
+            height: 40px;
+            font-size: 1rem;
+        }
+        .nav-btn {
+            width: 30px;
+            height: 30px;
+            font-size: 0.8rem;
+            background: #444;
+        }
         .play-btn:hover { background: #e68a00; }
+        .nav-btn:hover { background: #ff9800; }
         
         .progress-container {
             flex-grow: 1;
@@ -83,15 +109,20 @@
 </head>
 <body>
 
-    <audio id="audio-track" preload="auto">
-        <source src="BAILEY_-_Sector_Sweep_-_Half-life_2_Orange_Box_Episode_12_Portal_Team_fortress_2_2007_OST_64228539.mp3" type="audio/mpeg">
-    </audio>
+    <!-- Тег аудио без жестко прописанного трека (будет меняться через JS) -->
+    <audio id="audio-track" preload="auto"></audio>
 
     <div class="media-container">
         <img class="photo" src="icon.jpg" alt="Фото">
         
+        <!-- Блок с названием песни -->
+        <div class="track-title" id="track-name">Загрузка...</div>
+        
         <div class="custom-player">
+            <button class="nav-btn" id="prev-btn">◀◀</button>
             <button class="play-btn" id="play-pause-btn">▶</button>
+            <button class="nav-btn" id="next-btn">▶▶</button>
+            
             <div class="progress-container" id="progress-timeline">
                 <div class="progress-bar" id="progress-fill"></div>
             </div>
@@ -102,11 +133,30 @@
     <script>
         const audio = document.getElementById('audio-track');
         const playBtn = document.getElementById('play-pause-btn');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
         const progressContainer = document.getElementById('progress-timeline');
         const progressFill = document.getElementById('progress-fill');
         const timeShow = document.getElementById('time-show');
+        const trackName = document.getElementById('track-name');
 
-        let isWaiting = false;
+        // Список треков для воспроизведения
+        const playlist = [
+            { name: "Sector Sweep", file: "BAILEY_-_Sector_Sweep_-_Half-life_2_Orange_Box_Episode_12_Portal_Team_fortress_2_2007_OST_64228539.mp3" },
+            { name: "Apprehension and Evasion", file: "12_Apprehension_and_Evasion.mp3" },
+            { name: "Diabolical Adrenaline Guitar", file: "Diabolical_Adrenaline_Guitar.mp3" }
+        ];
+
+        let currentTrackIndex = 0;
+
+        // Функция загрузки трека по индексу
+        function loadTrack(index) {
+            const track = playlist[index];
+            audio.src = track.file;
+            trackName.innerText = track.name;
+            progressFill.style.width = '0%';
+            timeShow.innerText = "0:00";
+        }
 
         function formatTime(seconds) {
             if (isNaN(seconds) || !isFinite(seconds)) return "0:00";
@@ -115,9 +165,10 @@
             return mins + ":" + (secs < 10 ? "0" : "") + secs;
         }
 
+        // Кнопка Play/Pause
         playBtn.addEventListener('click', () => {
             if (audio.paused) {
-                audio.play().catch(err => console.log("Ждем загрузки файла..."));
+                audio.play().catch(err => console.log("Файл загружается..."));
                 playBtn.innerText = '❚❚';
             } else {
                 audio.pause();
@@ -125,18 +176,29 @@
             }
         });
 
-        // Если интернет медленный и аудио встало на загрузку (буферизацию)
-        audio.addEventListener('waiting', () => {
-            isWaiting = true;
-            playBtn.innerText = '⏳'; // Показываем песочные часы вместо паузы
-        });
-
-        // Когда интернет пролагал и файл продолжил скачиваться/играть
-        audio.addEventListener('playing', () => {
-            isWaiting = false;
+        // Переключение НАЗАД
+        prevBtn.addEventListener('click', () => {
+            currentTrackIndex--;
+            if (currentTrackIndex < 0) currentTrackIndex = playlist.length - 1; // переход к концу
+            loadTrack(currentTrackIndex);
+            audio.play().catch(err => console.log("Буферизация..."));
             playBtn.innerText = '❚❚';
         });
 
+        // Переключение ВПЕРЕД
+        nextBtn.addEventListener('click', () => {
+            currentTrackIndex++;
+            if (currentTrackIndex >= playlist.length) currentTrackIndex = 0; // переход к началу
+            loadTrack(currentTrackIndex);
+            audio.play().catch(err => console.log("Буферизация..."));
+            playBtn.innerText = '❚❚';
+        });
+
+        // Ожидание медленного интернета
+        audio.addEventListener('waiting', () => { playBtn.innerText = '⏳'; });
+        audio.addEventListener('playing', () => { playBtn.innerText = '❚❚'; });
+
+        // Полоса прогресса
         audio.addEventListener('timeupdate', () => {
             if (audio.duration && isFinite(audio.duration)) {
                 const percentage = (audio.currentTime / audio.duration) * 100;
@@ -145,6 +207,7 @@
             }
         });
 
+        // Перемотка кликом
         progressContainer.addEventListener('click', (e) => {
             if (audio.duration && isFinite(audio.duration) && audio.duration > 0) {
                 const width = progressContainer.clientWidth;
@@ -156,15 +219,17 @@
             }
         });
 
+        // Когда трек заканчивается, автоматически включается следующий
         audio.addEventListener('ended', () => {
-            playBtn.innerText = '▶';
-            progressFill.style.width = '0%';
-            timeShow.innerText = formatTime(0);
+            nextBtn.click();
         });
         
         audio.addEventListener('loadedmetadata', () => {
             timeShow.innerText = formatTime(audio.duration);
         });
+
+        // Инициализация первого трека при заходе на страницу
+        loadTrack(currentTrackIndex);
     </script>
 </body>
 </html>
